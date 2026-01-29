@@ -1,5 +1,5 @@
 {
-    "name": "ldc-shop-next",
+    "name": "ldc-shop-test",
     "main": ".open-next/worker.js",
     "keep_names": false,
     "compatibility_date": "2025-11-12",
@@ -13,7 +13,7 @@
     "d1_databases": [
         {
             "binding": "DB",
-            "database_name": "ldc-shop-next"
+            "database_name": "ldc-shop-test"
         }
     ],
     "observability": {
