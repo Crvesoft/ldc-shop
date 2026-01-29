@@ -174,7 +174,7 @@ export function AdminProductsContent({ products, stats, shopName, visitorCount, 
     return (
         <div className="space-y-6">
             {/* Shop Settings */}
-            <Card>
+            <Card id="settings">
                 <CardHeader>
                     <CardTitle>{t('admin.settings.title')}</CardTitle>
                 </CardHeader>
