@@ -198,6 +198,21 @@ export async function saveShopName(rawName: string) {
     revalidatePath('/admin')
 }
 
+export async function saveUiBackgroundImage(rawUrl: string) {
+    await checkAdmin()
+    const url = String(rawUrl || '').trim()
+    await setSetting('ui_background_image', url)
+    revalidatePath('/admin')
+}
+
+export async function saveUiBackgroundBlur(raw: string) {
+    await checkAdmin()
+    const parsed = Number.parseInt(String(raw || '').trim(), 10)
+    const clamped = Number.isFinite(parsed) ? Math.min(100, Math.max(0, parsed)) : 0
+    await setSetting('ui_background_blur', String(clamped))
+    revalidatePath('/admin')
+}
+
 export async function deleteReview(reviewId: number) {
     await checkAdmin()
     await db.delete(reviews).where(eq(reviews.id, reviewId))

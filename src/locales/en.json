@@ -183,6 +183,13 @@
             "lowStockThreshold": "Low stock threshold",
             "saveThreshold": "Save threshold",
             "shopNameEmpty": "Store name cannot be empty",
+            "uiBackgroundImage": "Settings background image",
+            "uiBackgroundImagePlaceholder": "https://example.com/your-image.jpg",
+            "uiBackgroundImageHint": "Use an online image URL. Leave blank to disable.",
+            "uiBackgroundBlur": "Blur",
+            "uiBackgroundBlurHint": "0-100%",
+            "saveUiBackgroundImage": "Save background image",
+            "saveUiBackgroundBlur": "Save blur",
             "checkin": {
                 "title": "Check-in",
                 "rewardTooltip": "Check-in Reward (Points)",

@@ -183,6 +183,13 @@
             "lowStockThreshold": "库存预警阈值",
             "saveThreshold": "保存阈值",
             "shopNameEmpty": "商店名称不能为空",
+            "uiBackgroundImage": "设置界面背景图",
+            "uiBackgroundImagePlaceholder": "https://example.com/your-image.jpg",
+            "uiBackgroundImageHint": "填写在线图床链接，留空则关闭背景图片。",
+            "uiBackgroundBlur": "模糊度",
+            "uiBackgroundBlurHint": "0-100%",
+            "saveUiBackgroundImage": "保存背景图",
+            "saveUiBackgroundBlur": "保存模糊度",
             "checkin": {
                 "title": "每日签到",
                 "rewardTooltip": "签到奖励 (积分)",
