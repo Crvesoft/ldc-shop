@@ -18,6 +18,31 @@ export async function checkAdmin() {
     }
 }
 
+async function ensureSettingsTable() {
+    await db.execute(sql`
+        CREATE TABLE IF NOT EXISTS settings (
+            key TEXT PRIMARY KEY,
+            value TEXT,
+            updated_at TIMESTAMP DEFAULT NOW()
+        )
+    `)
+}
+
+async function setSettingWithFallback(key: string, value: string) {
+    try {
+        await setSetting(key, value)
+    } catch (error: any) {
+        if (error.message?.includes('does not exist') ||
+            error.code === '42P01' ||
+            JSON.stringify(error).includes('42P01')) {
+            await ensureSettingsTable()
+            await setSetting(key, value)
+        } else {
+            throw error
+        }
+    }
+}
+
 export async function saveProduct(formData: FormData) {
     await checkAdmin()
 
@@ -174,25 +199,7 @@ export async function saveShopName(rawName: string) {
         throw new Error("Shop name is too long")
     }
 
-    try {
-        await setSetting('shop_name', name)
-    } catch (error: any) {
-        // If settings table doesn't exist, create it and retry
-        if (error.message?.includes('does not exist') ||
-            error.code === '42P01' ||
-            JSON.stringify(error).includes('42P01')) {
-            await db.execute(sql`
-                CREATE TABLE IF NOT EXISTS settings (
-                    key TEXT PRIMARY KEY,
-                    value TEXT,
-                    updated_at TIMESTAMP DEFAULT NOW()
-                )
-            `)
-            await setSetting('shop_name', name)
-        } else {
-            throw error
-        }
-    }
+    await setSettingWithFallback('shop_name', name)
 
     revalidatePath('/')
     revalidatePath('/admin')
@@ -208,7 +215,7 @@ export async function saveLowStockThreshold(raw: string) {
     await checkAdmin()
     const n = Number.parseInt(String(raw || '').trim(), 10)
     const value = Number.isFinite(n) && n > 0 ? String(n) : '5'
-    await setSetting('low_stock_threshold', value)
+    await setSettingWithFallback('low_stock_threshold', value)
     revalidatePath('/admin')
 }
 
@@ -216,16 +223,26 @@ export async function saveCheckinReward(raw: string) {
     await checkAdmin()
     const n = Number.parseInt(String(raw || '').trim(), 10)
     const value = Number.isFinite(n) && n > 0 ? String(n) : '10'
-    await setSetting('checkin_reward', value)
-    await setSetting('checkin_reward', value)
+    await setSettingWithFallback('checkin_reward', value)
     revalidatePath('/admin')
 }
 
 export async function saveCheckinEnabled(enabled: boolean) {
     await checkAdmin()
-    await setSetting('checkin_enabled', enabled ? 'true' : 'false')
+    await setSettingWithFallback('checkin_enabled', enabled ? 'true' : 'false')
     revalidatePath('/admin')
     revalidatePath('/')
+}
+
+export async function saveBackgroundSettings(rawUrl: string, rawBlur: string) {
+    await checkAdmin()
+    const url = String(rawUrl || '').trim()
+    const blurValue = Number.parseInt(String(rawBlur || '').trim(), 10)
+    const blur = Number.isFinite(blurValue) ? Math.min(Math.max(blurValue, 0), 60) : 0
+    await setSettingWithFallback('site_background_url', url)
+    await setSettingWithFallback('site_background_blur', String(blur))
+    revalidatePath('/')
+    revalidatePath('/admin')
 }
 
 async function ensureCategoriesTable() {

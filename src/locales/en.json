@@ -183,6 +183,11 @@
             "lowStockThreshold": "Low stock threshold",
             "saveThreshold": "Save threshold",
             "shopNameEmpty": "Store name cannot be empty",
+            "backgroundUrl": "Custom background image",
+            "backgroundUrlPlaceholder": "Paste a hosted image URL (https://...)",
+            "backgroundBlur": "Background blur",
+            "backgroundBlurUnit": "px",
+            "saveBackground": "Save background",
             "checkin": {
                 "title": "Check-in",
                 "rewardTooltip": "Check-in Reward (Points)",
