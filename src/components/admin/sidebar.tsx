@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { Package, CreditCard, LogOut, Megaphone, Star, Download, Tags, RotateCcw, Users } from "lucide-react"
+import { Package, CreditCard, LogOut, Megaphone, Star, Download, Tags, RotateCcw, Users, Settings } from "lucide-react"
 import { useI18n } from "@/lib/i18n/context"
 import { signOut } from "next-auth/react"
 
@@ -17,6 +17,9 @@ export function AdminSidebar({ username }: { username: string }) {
             <nav className="flex flex-col gap-2">
                 <Button variant="ghost" asChild className="justify-start">
                     <Link href="/admin"><Package className="mr-2 h-4 w-4" />{t('common.dashboardProducts')}</Link>
+                </Button>
+                <Button variant="ghost" asChild className="justify-start">
+                    <Link href="/admin#settings"><Settings className="mr-2 h-4 w-4" />{t('common.settings')}</Link>
                 </Button>
                 <Button variant="ghost" asChild className="justify-start">
                     <Link href="/admin/orders"><CreditCard className="mr-2 h-4 w-4" />{t('common.ordersRefunds')}</Link>

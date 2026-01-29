@@ -10,7 +10,7 @@ import { Label } from "@/components/ui/label"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
 import { Plus, Eye, EyeOff, ArrowUp, ArrowDown, TrendingUp, ShoppingCart, CreditCard, Package, Users } from "lucide-react"
-import { deleteProduct, toggleProductStatus, reorderProduct, saveShopName, saveLowStockThreshold, saveCheckinReward, saveCheckinEnabled } from "@/actions/admin"
+import { deleteProduct, toggleProductStatus, reorderProduct, saveShopName, saveLowStockThreshold, saveCheckinReward, saveCheckinEnabled, saveBackgroundSettings } from "@/actions/admin"
 import { toast } from "sonner"
 
 interface Product {
@@ -40,9 +40,11 @@ interface AdminProductsContentProps {
     lowStockThreshold: number
     checkinReward: number
     checkinEnabled: boolean
+    backgroundUrl: string | null
+    backgroundBlur: number
 }
 
-export function AdminProductsContent({ products, stats, shopName, visitorCount, lowStockThreshold, checkinReward, checkinEnabled }: AdminProductsContentProps) {
+export function AdminProductsContent({ products, stats, shopName, visitorCount, lowStockThreshold, checkinReward, checkinEnabled, backgroundUrl, backgroundBlur }: AdminProductsContentProps) {
     const { t } = useI18n()
 
     // State
@@ -55,6 +57,9 @@ export function AdminProductsContent({ products, stats, shopName, visitorCount, 
     const [savingReward, setSavingReward] = useState(false)
     const [enabledCheckin, setEnabledCheckin] = useState(checkinEnabled)
     const [savingEnabled, setSavingEnabled] = useState(false)
+    const [backgroundUrlValue, setBackgroundUrlValue] = useState(backgroundUrl || '')
+    const [backgroundBlurValue, setBackgroundBlurValue] = useState(String(backgroundBlur ?? 0))
+    const [savingBackground, setSavingBackground] = useState(false)
 
     // Derived state directly to avoid Hook complexity/errors
     const threshold = Number.parseInt(thresholdValue, 10) || 5
@@ -154,10 +159,22 @@ export function AdminProductsContent({ products, stats, shopName, visitorCount, 
         }
     }
 
+    const handleSaveBackground = async () => {
+        setSavingBackground(true)
+        try {
+            await saveBackgroundSettings(backgroundUrlValue, backgroundBlurValue)
+            toast.success(t('common.success'))
+        } catch (e: any) {
+            toast.error(e.message)
+        } finally {
+            setSavingBackground(false)
+        }
+    }
+
     return (
         <div className="space-y-6">
             {/* Shop Settings */}
-            <Card>
+            <Card id="settings">
                 <CardHeader>
                     <CardTitle>{t('admin.settings.title')}</CardTitle>
                 </CardHeader>
@@ -218,6 +235,34 @@ export function AdminProductsContent({ products, stats, shopName, visitorCount, 
                                     </Button>
                                 </div>
                             )}
+                        </div>
+                    </div>
+
+                    <div className="grid gap-3 md:max-w-xl">
+                        <Label htmlFor="background-url">{t('admin.settings.backgroundUrl')}</Label>
+                        <Input
+                            id="background-url"
+                            value={backgroundUrlValue}
+                            onChange={(e) => setBackgroundUrlValue(e.target.value)}
+                            placeholder={t('admin.settings.backgroundUrlPlaceholder')}
+                        />
+                        <div className="flex flex-wrap items-center gap-3">
+                            <div className="flex items-center gap-2">
+                                <Input
+                                    type="number"
+                                    min={0}
+                                    max={60}
+                                    className="w-24"
+                                    value={backgroundBlurValue}
+                                    onChange={(e) => setBackgroundBlurValue(e.target.value)}
+                                    placeholder="0"
+                                    title={t('admin.settings.backgroundBlur')}
+                                />
+                                <span className="text-xs text-muted-foreground">{t('admin.settings.backgroundBlurUnit')}</span>
+                            </div>
+                            <Button variant="outline" onClick={handleSaveBackground} disabled={savingBackground}>
+                                {savingBackground ? t('common.processing') : t('admin.settings.saveBackground')}
+                            </Button>
                         </div>
                     </div>
 

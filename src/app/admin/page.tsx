@@ -5,7 +5,7 @@ import { getProducts, getDashboardStats, getSetting, getVisitorCount, getRecentO
 import { AdminProductsContent } from "@/components/admin/products-content"
 
 export default async function AdminPage() {
-    const [products, stats, shopName, visitorCount, lowStockThreshold, checkinReward, checkinEnabled] = await Promise.all([
+    const [products, stats, shopName, visitorCount, lowStockThreshold, checkinReward, checkinEnabled, backgroundUrl, backgroundBlur] = await Promise.all([
         getProducts(),
         getDashboardStats(),
         (async () => {
@@ -47,6 +47,21 @@ export default async function AdminPage() {
                 return true
             }
         })(),
+        (async () => {
+            try {
+                return await getSetting('site_background_url')
+            } catch {
+                return null
+            }
+        })(),
+        (async () => {
+            try {
+                const v = await getSetting('site_background_blur')
+                return Number.parseInt(v || '0', 10) || 0
+            } catch {
+                return 0
+            }
+        })(),
     ])
 
     return (
@@ -68,6 +83,8 @@ export default async function AdminPage() {
             lowStockThreshold={lowStockThreshold}
             checkinReward={checkinReward}
             checkinEnabled={checkinEnabled}
+            backgroundUrl={backgroundUrl}
+            backgroundBlur={backgroundBlur}
         />
     )
 }
